@@ -21,9 +21,16 @@ namespace AuthenticationPratice.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginModel model)
         {
+
+            if (User.Identity.IsAuthenticated)
+            {
+                return LocalRedirect(model.ReturnUrl);
+            }
             //return Unauthorized();
 
             var userId = 3522;
+
+            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal).ConfigureAwait(false);
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
@@ -31,11 +38,8 @@ namespace AuthenticationPratice.Controllers
                 new Claim(ClaimTypes.Role, "Admin"),
                 new Claim("Favorite Color", "blue"),
             };
-
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var claimPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-            //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal).ConfigureAwait(false);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimPrincipal, new AuthenticationProperties { IsPersistent = model.RememberMe }).ConfigureAwait(false);
 
             return LocalRedirect(model.ReturnUrl);
