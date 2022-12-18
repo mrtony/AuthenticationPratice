@@ -44,7 +44,9 @@ namespace AuthenticationPratice
                 var path = Path.Combine(parent.Parent.FullName, "protection6");
                 services.AddDataProtection()
                 .PersistKeysToFileSystem(new DirectoryInfo(path))
-                .SetApplicationName("SharedCookieApp");
+                .SetApplicationName("SharedCookieApp")
+                .ProtectKeysWithDpapi(protectToLocalMachine: true);
+                //.DisableAutomaticKeyGeneration();  sub site要disable自動產生key
 
                 services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(options =>
